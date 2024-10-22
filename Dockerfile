@@ -1,4 +1,4 @@
-FROM centos/python-35-centos7:latest
+FROM centos/python-38-centos7:latest
 
 USER root
 
