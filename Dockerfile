@@ -2,30 +2,31 @@ FROM centos/python-38-centos7:latest
 
 USER root
 
-# Install required packages for building mod-wsgi and other dependencies
+# Install necessary system dependencies
 RUN yum -y update && yum install -y \
     gcc \
     make \
     httpd-devel \
     python38-devel \
+    yum-utils \
     && yum clean all
 
-# Copy the application source code into the container
+# Copy the application source code
 COPY . /tmp/src
 
-# Move the S2I scripts to the correct location
+# Move S2I scripts to the correct location
 RUN mv /tmp/src/.s2i/bin /tmp/scripts
 
-# Clean up unnecessary files and set proper permissions
+# Set permissions and clean up
 RUN rm -rf /tmp/src/.git* && \
     chown -R 1001 /tmp/src && \
     chgrp -R 0 /tmp/src && \
     chmod -R g+w /tmp/src
 
-# Switch back to non-root user
+# Switch to non-root user
 USER 1001
 
-# Set environment variables required by S2I
+# Set environment variables
 ENV S2I_SCRIPTS_PATH=/usr/libexec/s2i \
     S2I_BASH_ENV=/opt/app-root/etc/scl_enable \
     DISABLE_COLLECTSTATIC=1 \
